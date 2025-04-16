@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Time Progress</title>
+  <title>Time Bar</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>   
@@ -16,9 +16,14 @@
       height: 100%;
       overflow-x: hidden;
     }
+    .card-full-width {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 0;
+    }
   </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-white">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -68,7 +73,6 @@
         const segments = [];
         const intervalMinutes = 30;
         const numBlocks = totalMinutes / intervalMinutes;
-        const totalSegments = numBlocks * 2; // Each block now has 2 segments (25min + 5min)
         
         for (let i = 0; i < numBlocks; i++) {
           const blockStartTime = new Date(startTime.getTime() + i * intervalMinutes * 60 * 1000);
@@ -111,20 +115,18 @@
       const position = getCurrentPosition();
       
       return (
-        <div className="flex flex-col h-screen bg-gray-100">
-          <h1 className="text-3xl font-bold py-4 px-6 text-center text-gray-800">Daily Time Progress</h1>
-          
-          <div className="w-full flex-grow flex flex-col">
-            <div className="relative w-full px-0">
+        <div className="w-full">
+          <div className="card-full-width bg-white">
+            <div className="relative">
               {/* Time segments */}
-              <div className="h-16 flex w-full">
+              <div className="h-12 flex overflow-hidden">
                 {segments.map(segment => (
                   <div
                     key={segment.id}
                     className={`h-full ${segment.color} relative`}
                     style={{ width: `${segment.width}%` }}
                   >
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-medium">
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-medium text-sm">
                       {segment.periodNumber}
                     </div>
                   </div>
@@ -133,7 +135,7 @@
               
               {/* Current time marker */}
               <div 
-                className="absolute top-0 h-16 w-1 bg-red-500 rounded-full shadow-lg"
+                className="absolute top-0 h-12 w-1 bg-red-500 rounded-full shadow-lg"
                 style={{ 
                   left: `${position}%`, 
                   transform: 'translateX(-50%)',
@@ -143,28 +145,9 @@
               />
               
               {/* Time labels */}
-              <div className="flex justify-between mt-2 text-sm text-gray-600 px-2">
+              <div className="flex justify-between mt-2 text-sm text-gray-600">
                 <span>{formatTime(startTime)}</span>
                 <span>{formatTime(endTime)}</span>
-              </div>
-            </div>
-            
-            <div className="mt-6 text-center text-gray-700 pb-6">
-              <p className="text-xl">Current Time: <span className="font-semibold">{formatTime(currentTime)}</span></p>
-              <p className="mt-2 text-sm">The bar shows your day from 7:30 AM to 3:30 PM</p>
-              <div className="mt-3 flex items-center justify-center text-sm">
-                <div className="flex items-center mr-4">
-                  <div className="w-4 h-4 bg-blue-200 mr-2"></div>
-                  <span>25 min work (light)</span>
-                </div>
-                <div className="flex items-center mr-4">
-                  <div className="w-4 h-4 bg-blue-300 mr-2"></div>
-                  <span>25 min work (dark)</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-4 h-4 bg-gray-300 mr-2"></div>
-                  <span>5 min break</span>
-                </div>
               </div>
             </div>
           </div>
