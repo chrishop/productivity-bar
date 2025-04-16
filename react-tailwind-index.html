@@ -143,20 +143,20 @@
       
       return (
         <div className="w-full h-screen flex items-center">
-          <div className="near-full-width bg-white shadow-md p-6 my-4">
+          <div className="near-full-width bg-white shadow-md p-4 my-2">
             <div className="relative">
               {/* Time segments */}
-              <div className="h-12 flex rounded-md overflow-hidden">
+              <div className="h-10 flex rounded-md overflow-hidden">
                 {segments.map(segment => (
                   <div
                     key={segment.id}
                     className={`h-full ${segment.color} relative`}
                     style={{ width: `${segment.width}%` }}
                   >
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700 font-medium text-sm">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700 font-medium text-xs">
                       <div>{segment.periodNumber}</div>
                       {segment.timeLabel && (
-                        <div className="text-xs mt-1">{segment.timeLabel}</div>
+                        <div className="text-xs mt-0.5">{segment.timeLabel}</div>
                       )}
                     </div>
                   </div>
@@ -165,7 +165,7 @@
               
               {/* Current time marker */}
               <div 
-                className="absolute top-0 h-12 w-1 bg-red-500 rounded-full shadow-lg"
+                className="absolute top-0 h-10 w-1 bg-red-500 rounded-full shadow-lg"
                 style={{ 
                   left: `${position}%`, 
                   transform: 'translateX(-50%)',
@@ -175,14 +175,14 @@
               />
               
               {/* Start and end time labels */}
-              <div className="flex justify-between mt-2 text-sm text-gray-600">
+              <div className="flex justify-between mt-1 text-xs text-gray-600">
                 <span>{formatTime(startTime)}</span>
                 <span>{formatTime(endTime)}</span>
               </div>
 
               {/* Current time display (centered and bold) */}
-              <div className="text-center mt-4">
-                <span className="font-bold text-lg">{formatTimeWithSeconds(currentTime)}</span>
+              <div className="text-center mt-2">
+                <span className="font-bold text-base">{formatTimeWithSeconds(currentTime)}</span>
               </div>
             </div>
           </div>
