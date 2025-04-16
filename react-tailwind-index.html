@@ -82,31 +82,47 @@
           const periodNumber = `P${i + 1}`;
           const timeLabel = formatTime(blockStartTime);
           
-          // Calculate width percentages (25min is 5/6 of the 30min block, 5min is 1/6)
-          const workWidth = (25 / 30) * (100 / numBlocks);
-          const breakWidth = (5 / 30) * (100 / numBlocks);
+          // Check if this is lunch time (11am - 12 noon)
+          const isLunchTime = blockStartTime.getHours() === 11;
           
-          // Add work segment (25 min) with alternating colors
-          segments.push({
-            id: `${i}-work`,
-            time: blockStartTime,
-            width: workWidth,
-            color: i % 2 === 0 ? 'bg-blue-200' : 'bg-blue-300',
-            type: 'work',
-            periodNumber: periodNumber,
-            timeLabel: timeLabel
-          });
-          
-          // Add break segment (5 min)
-          segments.push({
-            id: `${i}-break`,
-            time: new Date(blockStartTime.getTime() + 25 * 60 * 1000),
-            width: breakWidth,
-            color: 'bg-gray-300',
-            type: 'break',
-            periodNumber: '',
-            timeLabel: ''
-          });
+          if (isLunchTime) {
+            // Add lunch block (full 30 minutes)
+            segments.push({
+              id: `${i}-lunch`,
+              time: blockStartTime,
+              width: 100 / numBlocks,
+              color: 'bg-yellow-200',
+              type: 'lunch',
+              periodNumber: 'LUNCH',
+              timeLabel: timeLabel
+            });
+          } else {
+            // Calculate width percentages (25min is 5/6 of the 30min block, 5min is 1/6)
+            const workWidth = (25 / 30) * (100 / numBlocks);
+            const breakWidth = (5 / 30) * (100 / numBlocks);
+            
+            // Add work segment (25 min) with alternating colors
+            segments.push({
+              id: `${i}-work`,
+              time: blockStartTime,
+              width: workWidth,
+              color: i % 2 === 0 ? 'bg-blue-200' : 'bg-blue-300',
+              type: 'work',
+              periodNumber: periodNumber,
+              timeLabel: timeLabel
+            });
+            
+            // Add break segment (5 min)
+            segments.push({
+              id: `${i}-break`,
+              time: new Date(blockStartTime.getTime() + 25 * 60 * 1000),
+              width: breakWidth,
+              color: 'bg-gray-300',
+              type: 'break',
+              periodNumber: '',
+              timeLabel: ''
+            });
+          }
         }
         
         return segments;
