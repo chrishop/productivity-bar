@@ -25,7 +25,7 @@
       border-radius: 0.375rem;
     }
     .vertical-container {
-      height: 100%;
+      height: 100svh;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -253,7 +253,7 @@
       );
       
       return (
-        <div className="w-full min-h-screen flex items-center justify-center">
+        <div className={`${isVertical ? 'h-svh min-h-screen flex items-center justify-center' : 'w-full min-h-screen flex items-center justify-center'}`}>
           <div className={`${isVertical ? 'w-20' : 'near-full-width'} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} shadow-md p-3 my-2 flex flex-col ${isVertical ? 'h-screen max-h-screen' : ''}`}>
             <div className="mb-3">
               {isVertical ? (
