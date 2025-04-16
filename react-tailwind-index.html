@@ -113,6 +113,11 @@
       const formatTime = (date) => {
         return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
       };
+
+      // Format time with seconds for current time display
+      const formatTimeWithSeconds = (date) => {
+        return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+      };
       
       const segments = getTimeSegments();
       const position = getCurrentPosition();
@@ -151,6 +156,11 @@
               <div className="flex justify-between mt-2 text-sm text-gray-600">
                 <span>{formatTime(startTime)}</span>
                 <span>{formatTime(endTime)}</span>
+              </div>
+
+              {/* Current time display (centered and bold) */}
+              <div className="text-center mt-4">
+                <span className="font-bold text-lg">{formatTimeWithSeconds(currentTime)}</span>
               </div>
             </div>
           </div>
