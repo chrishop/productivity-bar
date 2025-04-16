@@ -80,6 +80,7 @@
         for (let i = 0; i < numBlocks; i++) {
           const blockStartTime = new Date(startTime.getTime() + i * intervalMinutes * 60 * 1000);
           const periodNumber = `P${i + 1}`;
+          const timeLabel = formatTime(blockStartTime);
           
           // Calculate width percentages (25min is 5/6 of the 30min block, 5min is 1/6)
           const workWidth = (25 / 30) * (100 / numBlocks);
@@ -92,7 +93,8 @@
             width: workWidth,
             color: i % 2 === 0 ? 'bg-blue-200' : 'bg-blue-300',
             type: 'work',
-            periodNumber: periodNumber
+            periodNumber: periodNumber,
+            timeLabel: timeLabel
           });
           
           // Add break segment (5 min)
@@ -102,7 +104,8 @@
             width: breakWidth,
             color: 'bg-gray-300',
             type: 'break',
-            periodNumber: ''
+            periodNumber: '',
+            timeLabel: ''
           });
         }
         
@@ -134,8 +137,11 @@
                     className={`h-full ${segment.color} relative`}
                     style={{ width: `${segment.width}%` }}
                   >
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-medium text-sm">
-                      {segment.periodNumber}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700 font-medium text-sm">
+                      <div>{segment.periodNumber}</div>
+                      {segment.timeLabel && (
+                        <div className="text-xs mt-1">{segment.timeLabel}</div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -152,25 +158,8 @@
                 }}
               />
               
-              {/* Time ticks for each pomodoro period */}
-              <div className="relative mt-2">
-                {segments.filter(segment => segment.type === 'work').map(segment => (
-                  <div 
-                    key={`tick-${segment.id}`}
-                    className="absolute -top-1 text-xs text-gray-600"
-                    style={{ 
-                      left: `${segments.findIndex(s => s.id === segment.id) * (100 / segments.length)}%`,
-                      transform: 'translateX(-50%)'
-                    }}
-                  >
-                    |
-                    <div className="mt-1">{formatTime(segment.time)}</div>
-                  </div>
-                ))}
-              </div>
-              
               {/* Start and end time labels */}
-              <div className="flex justify-between mt-6 text-sm text-gray-600">
+              <div className="flex justify-between mt-2 text-sm text-gray-600">
                 <span>{formatTime(startTime)}</span>
                 <span>{formatTime(endTime)}</span>
               </div>
