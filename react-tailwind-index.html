@@ -8,6 +8,15 @@
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>   
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+  </style>
 </head>
 <body class="bg-gray-100">
   <div id="root"></div>
@@ -102,20 +111,20 @@
       const position = getCurrentPosition();
       
       return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12 px-4">
-          <h1 className="text-3xl font-bold mb-8 text-gray-800">Daily Time Progress</h1>
+        <div className="flex flex-col h-screen bg-gray-100">
+          <h1 className="text-3xl font-bold py-4 px-6 text-center text-gray-800">Daily Time Progress</h1>
           
-          <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
-            <div className="relative mb-4">
+          <div className="w-full flex-grow flex flex-col">
+            <div className="relative w-full px-0">
               {/* Time segments */}
-              <div className="h-12 flex rounded-md overflow-hidden">
+              <div className="h-16 flex w-full">
                 {segments.map(segment => (
                   <div
                     key={segment.id}
                     className={`h-full ${segment.color} relative`}
                     style={{ width: `${segment.width}%` }}
                   >
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-medium text-sm">
+                    <div className="absolute inset-0 flex items-center justify-center text-gray-700 font-medium">
                       {segment.periodNumber}
                     </div>
                   </div>
@@ -124,7 +133,7 @@
               
               {/* Current time marker */}
               <div 
-                className="absolute top-0 h-12 w-1 bg-red-500 rounded-full shadow-lg"
+                className="absolute top-0 h-16 w-1 bg-red-500 rounded-full shadow-lg"
                 style={{ 
                   left: `${position}%`, 
                   transform: 'translateX(-50%)',
@@ -134,13 +143,13 @@
               />
               
               {/* Time labels */}
-              <div className="flex justify-between mt-2 text-sm text-gray-600">
+              <div className="flex justify-between mt-2 text-sm text-gray-600 px-2">
                 <span>{formatTime(startTime)}</span>
                 <span>{formatTime(endTime)}</span>
               </div>
             </div>
             
-            <div className="mt-6 text-center text-gray-700">
+            <div className="mt-6 text-center text-gray-700 pb-6">
               <p className="text-xl">Current Time: <span className="font-semibold">{formatTime(currentTime)}</span></p>
               <p className="mt-2 text-sm">The bar shows your day from 7:30 AM to 3:30 PM</p>
               <div className="mt-3 flex items-center justify-center text-sm">
