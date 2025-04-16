@@ -15,7 +15,7 @@
       width: 100%;
       height: 100%;
       overflow-x: hidden;
-      background-color: #f3f4f6;
+      transition: background-color 0.3s ease;
     }
     .near-full-width {
       width: calc(100% - 24px);
@@ -34,7 +34,7 @@
     }
   </style>
 </head>
-<body class="bg-gray-100">
+<body>
   <div id="root"></div>
 
   <script type="text/babel">
@@ -43,6 +43,12 @@
     const TimeBar = () => {
       const [currentTime, setCurrentTime] = useState(new Date());
       const [isVertical, setIsVertical] = useState(false);
+      const [isDarkMode, setIsDarkMode] = useState(false);
+      
+      // Apply dark/light mode to document body
+      useEffect(() => {
+        document.body.style.backgroundColor = isDarkMode ? '#1f2937' : '#f3f4f6';
+      }, [isDarkMode]);
       
       // Update time every second
       useEffect(() => {
@@ -107,7 +113,8 @@
               id: `${i}-lunch`,
               time: blockStartTime,
               width: 100 / numBlocks,
-              color: 'bg-yellow-200',
+              color: isDarkMode ? 'bg-amber-600' : 'bg-yellow-200',
+              textColor: isDarkMode ? 'text-white' : 'text-gray-700',
               type: 'lunch',
               periodNumber: 'L', // Abbreviated
               timeLabel: timeLabel,
@@ -123,7 +130,10 @@
               id: `${i}-work`,
               time: blockStartTime,
               width: workWidth,
-              color: i % 2 === 0 ? 'bg-blue-200' : 'bg-blue-300',
+              color: isDarkMode 
+                ? (i % 2 === 0 ? 'bg-blue-800' : 'bg-blue-700')
+                : (i % 2 === 0 ? 'bg-blue-200' : 'bg-blue-300'),
+              textColor: isDarkMode ? 'text-white' : 'text-gray-700',  
               type: 'work',
               periodNumber: periodNumber,
               timeLabel: timeLabel,
@@ -135,7 +145,8 @@
               id: `${i}-break`,
               time: new Date(blockStartTime.getTime() + 25 * 60 * 1000),
               width: breakWidth,
-              color: 'bg-gray-300',
+              color: isDarkMode ? 'bg-gray-700' : 'bg-gray-300',
+              textColor: isDarkMode ? 'text-white' : 'text-gray-700',
               type: 'break',
               periodNumber: '',
               timeLabel: '',
@@ -170,7 +181,7 @@
                 className={`h-full ${segment.color} relative`}
                 style={{ width: `${segment.width}%` }}
               >
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700 font-medium text-xs">
+                <div className={`absolute inset-0 flex flex-col items-center justify-center ${segment.textColor} font-medium text-xs`}>
                   <div>{segment.periodNumber}</div>
                   {segment.timeLabel && (
                     <div className="text-xs mt-0.5">{segment.timeLabel}</div>
@@ -190,12 +201,6 @@
               zIndex: 10
             }}
           />
-          
-          {/* Start and end time labels */}
-          <div className="flex justify-between mt-1 text-xs text-gray-600">
-            <span>{formatTime(startTime)}</span>
-            <span>{formatTime(endTime)}</span>
-          </div>
         </div>
       );
       
@@ -216,7 +221,7 @@
                       className={`w-full ${segment.color} relative`}
                       style={{ height: `${heightPercentage}%` }}
                     >
-                      <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-700 font-medium text-xs">
+                      <div className={`absolute inset-0 flex flex-col items-center justify-center ${segment.textColor} font-medium text-xs`}>
                         {segment.periodNumber}
                         {segment.shortTimeLabel && (
                           <div className="text-tiny mt-0.5">{segment.shortTimeLabel}</div>
@@ -244,17 +249,41 @@
       
       return (
         <div className="w-full min-h-screen flex items-center justify-center">
-          <div className={`${isVertical ? 'w-20' : 'near-full-width'} bg-white shadow-md p-3 my-2 flex flex-col ${isVertical ? 'h-screen max-h-screen' : ''}`}>
-            {/* Top section with time and toggle - now on separate rows */}
+          <div className={`${isVertical ? 'w-20' : 'near-full-width'} ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} shadow-md p-3 my-2 flex flex-col ${isVertical ? 'h-screen max-h-screen' : ''}`}>
             <div className="mb-3">
-              <div className="flex justify-end mb-1">
-                <button 
-                  onClick={() => setIsVertical(!isVertical)}
-                  className="px-2 py-0.5 bg-gray-200 hover:bg-gray-300 rounded text-xs font-medium transition-colors"
-                >
-                  {isVertical ? "Horiz." : "Vert."}
-                </button>
-              </div>
+              {isVertical ? (
+                /* Stack buttons vertically in vertical mode */
+                <div className="flex flex-col space-y-1 mb-1">
+                  <button 
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    className={`px-2 py-0.5 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded text-xs font-medium transition-colors`}
+                  >
+                    {isDarkMode ? "Light" : "Dark"}
+                  </button>
+                  <button 
+                    onClick={() => setIsVertical(!isVertical)}
+                    className={`px-2 py-0.5 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded text-xs font-medium transition-colors`}
+                  >
+                    {isVertical ? "Horiz." : "Vert."}
+                  </button>
+                </div>
+              ) : (
+                /* Buttons side by side in horizontal mode */
+                <div className="flex justify-between mb-1">
+                  <button 
+                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    className={`px-2 py-0.5 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded text-xs font-medium transition-colors`}
+                  >
+                    {isDarkMode ? "Light" : "Dark"}
+                  </button>
+                  <button 
+                    onClick={() => setIsVertical(!isVertical)}
+                    className={`px-2 py-0.5 ${isDarkMode ? 'bg-gray-600 hover:bg-gray-500' : 'bg-gray-200 hover:bg-gray-300'} rounded text-xs font-medium transition-colors`}
+                  >
+                    {isVertical ? "Horiz." : "Vert."}
+                  </button>
+                </div>
+              )}
               <div className="text-center font-bold text-sm">
                 {formatTimeWithSeconds(currentTime)}
               </div>
