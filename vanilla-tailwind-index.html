@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Time Progress</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .time-segment {
+      height: 100%;
+    }
+    .time-marker {
+      position: absolute;
+      top: 0;
+      height: 48px;
+      width: 4px;
+      background-color: #ef4444;
+      border-radius: 9999px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transform: translateX(-50%);
+      transition: left 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen bg-gray-100 flex flex-col items-center py-12 px-4">
+    <h1 class="text-3xl font-bold mb-8 text-gray-800">Daily Time Progress</h1>
+    
+    <div class="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
+      <div class="relative mb-4">
+        <!-- Time segments container -->
+        <div id="time-segments" class="h-12 flex rounded-md overflow-hidden"></div>
+        
+        <!-- Current time marker -->
+        <div id="time-marker" class="time-marker"></div>
+        
+        <!-- Time labels -->
+        <div class="flex justify-between mt-2 text-sm text-gray-600">
+          <span id="start-time"></span>
+          <span id="end-time"></span>
+        </div>
+      </div>
+      
+      <div class="mt-6 text-center text-gray-700">
+        <p class="text-xl">Current Time: <span id="current-time" class="font-semibold"></span></p>
+        <p class="mt-2 text-sm">The bar shows your day from 7:30 AM to 3:30 PM</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get DOM elements
+    const timeSegmentsContainer = document.getElementById('time-segments');
+    const timeMarker = document.getElementById('time-marker');
+    const startTimeEl = document.getElementById('start-time');
+    const endTimeEl = document.getElementById('end-time');
+    const currentTimeEl = document.getElementById('current-time');
+    
+    // Define start and end times
+    const startTime = new Date();
+    startTime.setHours(7, 30, 0, 0);
+    
+    const endTime = new Date();
+    endTime.setHours(15, 30, 0, 0);
+    
+    // Calculate total minutes in the range
+    const totalMinutes = (endTime - startTime) / (1000 * 60);
+    
+    // Format time as HH:MM AM/PM
+    function formatTime(date) {
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+    
+    // Set start and end time labels
+    startTimeEl.textContent = formatTime(startTime);
+    endTimeEl.textContent = formatTime(endTime);
+    
+    // Generate time segments (30 min intervals with alternating colors)
+    function createTimeSegments() {
+      timeSegmentsContainer.innerHTML = '';
+      const intervalMinutes = 30;
+      const numSegments = totalMinutes / intervalMinutes;
+      const segmentWidth = 100 / numSegments;
+      
+      for (let i = 0; i < numSegments; i++) {
+        const segment = document.createElement('div');
+        segment.className = `time-segment ${i % 2 === 0 ? 'bg-blue-200' : 'bg-blue-300'}`;
+        segment.style.width = `${segmentWidth}%`;
+        timeSegmentsContainer.appendChild(segment);
+      }
+    }
+    
+    // Calculate the current position as a percentage
+    function calculatePosition(currentTime) {
+      // Check if current time is before start time
+      if (currentTime < startTime) {
+        return 0;
+      }
+      
+      // Check if current time is after end time
+      if (currentTime > endTime) {
+        return 100;
+      }
+      
+      // Calculate percentage based on elapsed time
+      const elapsedMinutes = (currentTime - startTime) / (1000 * 60);
+      return (elapsedMinutes / totalMinutes) * 100;
+    }
+    
+    // Update the time display and marker position
+    function updateTimeDisplay() {
+      const now = new Date();
+      const position = calculatePosition(now);
+      
+      // Update current time display
+      currentTimeEl.textContent = formatTime(now);
+      
+      // Update marker position
+      timeMarker.style.left = `${position}%`;
+    }
+    
+    // Initialize the time bar
+    function initTimeBar() {
+      createTimeSegments();
+      updateTimeDisplay();
+      
+      // Update time every second
+      setInterval(updateTimeDisplay, 1000);
+    }
+    
+    // Start the application
+    initTimeBar();
+  </script>
+</body>
+</html>

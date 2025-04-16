@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Time Progress</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>   
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const TimeBar = () => {
+      const [currentTime, setCurrentTime] = useState(new Date());
+      
+      // Update time every second
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setCurrentTime(new Date());
+        }, 1000);
+        
+        return () => clearInterval(timer);
+      }, []);
+      
+      // Define start and end times
+      const startTime = new Date();
+      startTime.setHours(7, 30, 0, 0);
+      
+      const endTime = new Date();
+      endTime.setHours(15, 30, 0, 0);
+      
+      // Calculate total minutes in the range
+      const totalMinutes = (endTime - startTime) / (1000 * 60);
+      
+      // Calculate the current position as a percentage
+      const getCurrentPosition = () => {
+        // Check if current time is before start time
+        if (currentTime < startTime) {
+          return 0;
+        }
+        
+        // Check if current time is after end time
+        if (currentTime > endTime) {
+          return 100;
+        }
+        
+        // Calculate percentage based on elapsed time
+        const elapsedMinutes = (currentTime - startTime) / (1000 * 60);
+        return (elapsedMinutes / totalMinutes) * 100;
+      };
+      
+      // Generate time segments (30 min intervals with alternating colors)
+      const getTimeSegments = () => {
+        const segments = [];
+        const intervalMinutes = 30;
+        const numSegments = totalMinutes / intervalMinutes;
+        const segmentWidth = 100 / numSegments;
+        
+        for (let i = 0; i < numSegments; i++) {
+          const segmentTime = new Date(startTime.getTime() + i * intervalMinutes * 60 * 1000);
+          segments.push({
+            id: i,
+            time: segmentTime,
+            width: segmentWidth,
+            color: i % 2 === 0 ? 'bg-blue-200' : 'bg-blue-300'
+          });
+        }
+        
+        return segments;
+      };
+      
+      // Format time as HH:MM AM/PM
+      const formatTime = (date) => {
+        return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+      };
+      
+      const segments = getTimeSegments();
+      const position = getCurrentPosition();
+      
+      return (
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center py-12 px-4">
+          <h1 className="text-3xl font-bold mb-8 text-gray-800">Daily Time Progress</h1>
+          
+          <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
+            <div className="relative mb-4">
+              {/* Time segments */}
+              <div className="h-12 flex rounded-md overflow-hidden">
+                {segments.map(segment => (
+                  <div
+                    key={segment.id}
+                    className={`h-full ${segment.color}`}
+                    style={{ width: `${segment.width}%` }}
+                  />
+                ))}
+              </div>
+              
+              {/* Current time marker */}
+              <div 
+                className="absolute top-0 h-12 w-1 bg-red-500 rounded-full shadow-lg"
+                style={{ 
+                  left: `${position}%`, 
+                  transform: 'translateX(-50%)',
+                  transition: 'left 0.5s ease-in-out'
+                }}
+              />
+              
+              {/* Time labels */}
+              <div className="flex justify-between mt-2 text-sm text-gray-600">
+                <span>{formatTime(startTime)}</span>
+                <span>{formatTime(endTime)}</span>
+              </div>
+            </div>
+            
+            <div className="mt-6 text-center text-gray-700">
+              <p className="text-xl">Current Time: <span className="font-semibold">{formatTime(currentTime)}</span></p>
+              <p className="mt-2 text-sm">The bar shows your day from 7:30 AM to 3:30 PM</p>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Render the app
+    ReactDOM.render(<TimeBar />, document.getElementById('root'));
+  </script>
+</body>
+</html>
