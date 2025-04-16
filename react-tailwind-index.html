@@ -152,8 +152,25 @@
                 }}
               />
               
-              {/* Time labels */}
-              <div className="flex justify-between mt-2 text-sm text-gray-600">
+              {/* Time ticks for each pomodoro period */}
+              <div className="relative mt-2">
+                {segments.filter(segment => segment.type === 'work').map(segment => (
+                  <div 
+                    key={`tick-${segment.id}`}
+                    className="absolute -top-1 text-xs text-gray-600"
+                    style={{ 
+                      left: `${segments.findIndex(s => s.id === segment.id) * (100 / segments.length)}%`,
+                      transform: 'translateX(-50%)'
+                    }}
+                  >
+                    |
+                    <div className="mt-1">{formatTime(segment.time)}</div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Start and end time labels */}
+              <div className="flex justify-between mt-6 text-sm text-gray-600">
                 <span>{formatTime(startTime)}</span>
                 <span>{formatTime(endTime)}</span>
               </div>
